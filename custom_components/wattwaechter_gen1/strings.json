@@ -21,6 +21,17 @@
       "already_configured": "This device is already configured"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling settings",
+        "description": "Choose how often the Wattwächter is queried. Very short intervals increase network and device load.",
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "meter_id": { "name": "Meter ID" },

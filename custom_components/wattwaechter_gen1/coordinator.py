@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import WattwaechterApi, WattwaechterError
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
+from .const import DOMAIN
 
 LOGGER = logging.getLogger(__name__)
 
@@ -17,13 +18,15 @@ LOGGER = logging.getLogger(__name__)
 class WattwaechterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Fetch all Tasmota sensor values with one request."""
 
-    def __init__(self, hass: HomeAssistant, api: WattwaechterApi) -> None:
+    def __init__(
+        self, hass: HomeAssistant, api: WattwaechterApi, scan_interval: int
+    ) -> None:
         """Initialize the coordinator."""
         super().__init__(
             hass,
             logger=LOGGER,
             name=DOMAIN,
-            update_interval=DEFAULT_SCAN_INTERVAL,
+            update_interval=timedelta(seconds=scan_interval),
         )
         self.api = api
 
@@ -33,4 +36,3 @@ class WattwaechterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return await self.api.async_get_sensor_data()
         except WattwaechterError as err:
             raise UpdateFailed(f"Error communicating with Wattwächter: {err}") from err
-

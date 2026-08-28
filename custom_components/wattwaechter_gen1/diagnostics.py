@@ -19,6 +19,7 @@ async def async_get_config_entry_diagnostics(
     del hass
     return {
         "config": async_redact_data(entry.data, {CONF_PASSWORD}),
+        "options": dict(entry.options),
         "device": asdict(entry.runtime_data.device_info),
         "data": entry.runtime_data.coordinator.data,
     }

@@ -21,6 +21,17 @@
       "already_configured": "Dieses Gerät ist bereits eingerichtet"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Abfrageeinstellungen",
+        "description": "Lege fest, wie oft der Wattwächter abgefragt wird. Sehr kurze Intervalle erhöhen die Netzwerk- und Gerätelast.",
+        "data": {
+          "scan_interval": "Abfrageintervall (Sekunden)"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "meter_id": { "name": "Zähler-ID" },

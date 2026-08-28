@@ -6,8 +6,14 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_HOST
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import (
@@ -17,7 +23,16 @@ from .api import (
     WattwaechterInvalidResponse,
     normalize_host,
 )
-from .const import CONF_PASSWORD, CONF_USERNAME, DEFAULT_NAME, DOMAIN
+from .const import (
+    CONF_PASSWORD,
+    CONF_SCAN_INTERVAL,
+    CONF_USERNAME,
+    DEFAULT_NAME,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
+)
 
 STEP_USER_SCHEMA = vol.Schema(
     {
@@ -27,11 +42,28 @@ STEP_USER_SCHEMA = vol.Schema(
     }
 )
 
+OPTIONS_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.All(
+            vol.Coerce(int),
+            vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
+        )
+    }
+)
+
 
 class WattwaechterConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Wattwächter Gen1."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        _config_entry: ConfigEntry,
+    ) -> "WattwaechterOptionsFlow":
+        """Create the options flow."""
+        return WattwaechterOptionsFlow()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -80,3 +112,25 @@ class WattwaechterConfigFlow(ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+
+class WattwaechterOptionsFlow(OptionsFlow):
+    """Handle Wattwächter Gen1 options."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Configure the polling interval."""
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+
+        current_options = {
+            CONF_SCAN_INTERVAL: self.config_entry.options.get(
+                CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+            )
+        }
+        return self.async_show_form(
+            step_id="init",
+            data_schema=self.add_suggested_values_to_schema(
+                OPTIONS_SCHEMA, current_options
+            ),
+        )
