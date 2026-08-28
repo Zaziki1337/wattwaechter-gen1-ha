@@ -42,4 +42,4 @@ jobs:
           cache: pip
           cache-dependency-path: requirements_test.txt
       - run: python -m pip install -r requirements_test.txt
-      - run: pytest -q
+      - run: python -m pytest -q
