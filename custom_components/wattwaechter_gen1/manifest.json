@@ -1,0 +1,13 @@
+{
+  "domain": "wattwaechter_gen1",
+  "name": "Wattwächter Gen1",
+  "codeowners": ["@Zaziki1337"],
+  "config_flow": true,
+  "documentation": "https://github.com/Zaziki1337/wattwaechter-gen1-ha",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Zaziki1337/wattwaechter-gen1-ha/issues",
+  "loggers": ["custom_components.wattwaechter_gen1"],
+  "version": "0.1.0"
+}
+

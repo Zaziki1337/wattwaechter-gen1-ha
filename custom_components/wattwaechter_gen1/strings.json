@@ -1,0 +1,47 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Wattwächter Gen1",
+        "description": "Enter the hostname or IP address of the Tasmota device. Credentials are only needed when web authentication is enabled.",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "invalid_host": "Enter a hostname or IP address without a path",
+      "invalid_response": "The device did not return supported Tasmota sensor data"
+    },
+    "abort": {
+      "already_configured": "This device is already configured"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "meter_id": { "name": "Meter ID" },
+      "meter_import_total": { "name": "Total imported energy" },
+      "meter_export_total": { "name": "Total exported energy" },
+      "net_frequency": { "name": "Grid frequency" },
+      "actual_power": { "name": "Active power" },
+      "current_l1": { "name": "Current L1" },
+      "current_l2": { "name": "Current L2" },
+      "current_l3": { "name": "Current L3" },
+      "voltage_l1": { "name": "Voltage L1" },
+      "voltage_l2": { "name": "Voltage L2" },
+      "voltage_l3": { "name": "Voltage L3" },
+      "effective_power_l1": { "name": "Active power L1" },
+      "effective_power_l2": { "name": "Active power L2" },
+      "effective_power_l3": { "name": "Active power L3" },
+      "phase_l1_l2": { "name": "Phase angle L1–L2" },
+      "phase_l1_l3": { "name": "Phase angle L1–L3" },
+      "phase_l1": { "name": "Phase angle L1" },
+      "phase_l2": { "name": "Phase angle L2" },
+      "phase_l3": { "name": "Phase angle L3" }
+    }
+  }
+}
