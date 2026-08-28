@@ -35,7 +35,10 @@ Die Integration fragt standardmäßig alle 2 Sekunden `Status 10` ab. Das
 Intervall lässt sich unter **Einstellungen → Geräte & Dienste → Wattwächter
 Gen1 → Konfigurieren** zwischen 2 und 3600 Sekunden einstellen. Die im Payload
 enthaltenen skalaren Messwerte werden beim Einrichten automatisch als Sensoren
-angelegt. Änderungen am Intervall werden sofort übernommen.
+angelegt. Als Entitätsname wird der jeweilige Feldname aus Tasmotas
+`StatusSNS`-Antwort übernommen, beispielsweise `meter_import_total`,
+`actual_power` oder `current_l1`. Änderungen am Intervall werden sofort
+übernommen.
 
 Für das originale Wattwächter-Gen1-Skript sind folgende Werte explizit
 zugeordnet:

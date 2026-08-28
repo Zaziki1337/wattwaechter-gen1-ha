@@ -8,5 +8,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/Zaziki1337/wattwaechter-gen1-ha/issues",
   "loggers": ["custom_components.wattwaechter_gen1"],
-  "version": "0.2.0"
+  "version": "0.2.1"
 }

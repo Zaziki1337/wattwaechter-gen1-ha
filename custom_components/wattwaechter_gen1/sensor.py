@@ -36,7 +36,6 @@ class SensorMetadata:
     device_class: SensorDeviceClass | None = None
     unit: str | None = None
     state_class: SensorStateClass | None = None
-    translation_key: str | None = None
     icon: str | None = None
     entity_category: EntityCategory | None = None
     suggested_display_precision: int | None = None
@@ -45,7 +44,6 @@ class SensorMetadata:
 def _measurement(
     device_class: SensorDeviceClass,
     unit: str,
-    translation_key: str,
     precision: int,
 ) -> SensorMetadata:
     """Build metadata for an instantaneous measurement."""
@@ -53,14 +51,12 @@ def _measurement(
         device_class=device_class,
         unit=unit,
         state_class=SensorStateClass.MEASUREMENT,
-        translation_key=translation_key,
         suggested_display_precision=precision,
     )
 
 
 EHZ_SENSOR_METADATA: dict[str, SensorMetadata] = {
     "ID": SensorMetadata(
-        translation_key="meter_id",
         icon="mdi:identifier",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
@@ -68,30 +64,26 @@ EHZ_SENSOR_METADATA: dict[str, SensorMetadata] = {
         device_class=SensorDeviceClass.ENERGY,
         unit=UnitOfEnergy.KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        translation_key="meter_import_total",
         suggested_display_precision=1,
     ),
     "meter_export_total": SensorMetadata(
         device_class=SensorDeviceClass.ENERGY,
         unit=UnitOfEnergy.KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        translation_key="meter_export_total",
         suggested_display_precision=1,
     ),
     "net_frequency": _measurement(
         SensorDeviceClass.FREQUENCY,
         UnitOfFrequency.HERTZ,
-        "net_frequency",
         1,
     ),
     "actual_power": _measurement(
-        SensorDeviceClass.POWER, UnitOfPower.WATT, "actual_power", 0
+        SensorDeviceClass.POWER, UnitOfPower.WATT, 0
     ),
     **{
         f"current_l{phase}": _measurement(
             SensorDeviceClass.CURRENT,
             UnitOfElectricCurrent.AMPERE,
-            f"current_l{phase}",
             2,
         )
         for phase in (1, 2, 3)
@@ -100,7 +92,6 @@ EHZ_SENSOR_METADATA: dict[str, SensorMetadata] = {
         f"voltage_l{phase}": _measurement(
             SensorDeviceClass.VOLTAGE,
             UnitOfElectricPotential.VOLT,
-            f"voltage_l{phase}",
             1,
         )
         for phase in (1, 2, 3)
@@ -109,7 +100,6 @@ EHZ_SENSOR_METADATA: dict[str, SensorMetadata] = {
         f"eff_power_l{phase}": _measurement(
             SensorDeviceClass.POWER,
             UnitOfPower.WATT,
-            f"effective_power_l{phase}",
             0,
         )
         for phase in (1, 2, 3)
@@ -118,17 +108,16 @@ EHZ_SENSOR_METADATA: dict[str, SensorMetadata] = {
         field: SensorMetadata(
             unit="°",
             state_class=SensorStateClass.MEASUREMENT,
-            translation_key=translation_key,
             icon="mdi:angle-acute",
             suggested_display_precision=0,
         )
-        for field, translation_key in {
-            "phase_l1_l2": "phase_l1_l2",
-            "phase_l1_l3": "phase_l1_l3",
-            "phase_l1": "phase_l1",
-            "phase_l2": "phase_l2",
-            "phase_l3": "phase_l3",
-        }.items()
+        for field in (
+            "phase_l1_l2",
+            "phase_l1_l3",
+            "phase_l1",
+            "phase_l2",
+            "phase_l3",
+        )
     },
 }
 
@@ -153,14 +142,13 @@ class WattwaechterSensor(WattwaechterEntity, SensorEntity):
         self._path = path
         path_id = "_".join(_slugify(part) for part in path)
         self._attr_unique_id = f"{entry.unique_id or entry.entry_id}_{path_id}"
+        self._attr_name = _name_for(path)
 
         initial_value = _value_at(entry.runtime_data.coordinator.data, path)
         metadata = _metadata_for(path, initial_value)
-        self._attr_name = None if metadata.translation_key else " · ".join(path)
         self._attr_device_class = metadata.device_class
         self._attr_native_unit_of_measurement = metadata.unit
         self._attr_state_class = metadata.state_class
-        self._attr_translation_key = metadata.translation_key
         self._attr_icon = metadata.icon
         self._attr_entity_category = metadata.entity_category
         self._attr_suggested_display_precision = metadata.suggested_display_precision
@@ -251,3 +239,8 @@ def _metadata_for(path: tuple[str, ...], value: Any) -> SensorMetadata:
 def _slugify(value: str) -> str:
     """Create a stable entity-id fragment from an API field."""
     return re.sub(r"[^a-z0-9]+", "_", value.casefold()).strip("_") or "value"
+
+
+def _name_for(path: tuple[str, ...]) -> str:
+    """Use the field name supplied by Tasmota as the entity name."""
+    return path[-1]

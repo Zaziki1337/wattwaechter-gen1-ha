@@ -6,6 +6,7 @@ from homeassistant.const import UnitOfEnergy, UnitOfFrequency, UnitOfPower
 from custom_components.wattwaechter_gen1.sensor import (
     _leaf_paths,
     _metadata_for,
+    _name_for,
     _slugify,
     _value_at,
 )
@@ -81,10 +82,15 @@ def test_metadata_for_exact_ehz_fields() -> None:
 
     assert frequency.device_class is SensorDeviceClass.FREQUENCY
     assert frequency.unit == UnitOfFrequency.HERTZ
-    assert frequency.translation_key == "net_frequency"
     assert phase_angle.unit == "°"
-    assert phase_angle.translation_key == "phase_l1_l2"
-    assert meter_id.translation_key == "meter_id"
+    assert meter_id.icon == "mdi:identifier"
+
+
+def test_sensor_name_uses_tasmota_field_name() -> None:
+    """Each sensor keeps the distinct name found in StatusSNS."""
+    assert _name_for(("eHZ", "meter_import_total")) == "meter_import_total"
+    assert _name_for(("eHZ", "actual_power")) == "actual_power"
+    assert _name_for(("eHZ", "current_l1")) == "current_l1"
 
 
 def test_text_values_do_not_receive_numeric_metadata() -> None:
