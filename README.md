@@ -3,6 +3,10 @@
 [![Validate](https://github.com/Zaziki1337/wattwaechter-gen1-ha/actions/workflows/validate.yml/badge.svg)](https://github.com/Zaziki1337/wattwaechter-gen1-ha/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+<p align="center">
+  <img src="custom_components/wattwaechter_gen1/brand/icon@2x.png" alt="Wattwächter Gen1 Icon" width="160">
+</p>
+
 Mit dieser Custom Integration bindest du einen **Wattwächter Wi-Fi/USB Gen1**
 mit Tasmota-Firmware direkt in Home Assistant ein. Die Messwerte deines
 digitalen Stromzählers werden lokal über die Tasmota-HTTP-API ausgelesen und
